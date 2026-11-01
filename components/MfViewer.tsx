@@ -10,6 +10,10 @@ import { disposeViewer } from "../lib/viewer-dom";
 const MARKER_COLORS = ["#ff5136", "#ffd23f", "#3fd68f", "#4fa8ff", "#ff4fd8"];
 const MARKER_RADIUS_M = 12;
 const SPEEDS = [1, 4, 10, 60];
+/** 軌跡レイヤを個別描画する上限。これ以上は歩行NWのみ表示する */
+const TRAIL_LIMIT = 24;
+const MOVER_LIST_LIMIT = 24;
+const NETWORK_COLOR = "#7aa2f7";
 
 type MarkerEntry = {
   mover: Mover;
@@ -50,6 +54,7 @@ export default function MfViewer({ areas, defaultAreaId }: Props) {
   const [clockMs, setClockMs] = useState(0);
   const [range, setRange] = useState<[number, number] | undefined>(undefined);
   const [moverIds, setMoverIds] = useState<string[]>([]);
+  const [simInfo, setSimInfo] = useState("");
 
   useEffect(() => {
     playingRef.current = playing;
@@ -73,6 +78,7 @@ export default function MfViewer({ areas, defaultAreaId }: Props) {
     setErrorMsg("");
     setRange(undefined);
     setMoverIds([]);
+    setSimInfo("");
 
     // Keep wheel gestures over the map from scrolling the page. The listener
     // only calls preventDefault so navara's own zoom handling still runs.
@@ -161,35 +167,68 @@ export default function MfViewer({ areas, defaultAreaId }: Props) {
         },
       ]);
 
-      const res = await apiFetch("/api/moving-features", { query: { area: area.id } });
+      const [res, netRes] = await Promise.all([
+        apiFetch("/api/moving-features", { query: { area: area.id } }),
+        apiFetch("/api/walk-network", { query: { area: area.id } }),
+      ]);
       if (cancelled) return;
-      const movers = parseMovers(res.movers);
-      movers.forEach((mover, i) => {
-        const style = MARKER_COLORS[i % MARKER_COLORS.length];
-        const color = new Color().setStyle(style);
-        const trail = view.addSource({
+
+      if (netRes.geojson.features.length > 0) {
+        const network = view.addSource({
           type: "geojson",
           data: {
-            type: "Feature",
-            geometry: {
-              type: "LineString",
-              coordinates: mover.positions.map((p) =>
-                p.height !== undefined ? [p.lng, p.lat, p.height] : [p.lng, p.lat],
-              ),
-            },
-            properties: {},
+            type: "FeatureCollection",
+            features: netRes.geojson.features.map((f) => ({
+              type: "Feature",
+              geometry: { type: "LineString", coordinates: f.geometry.coordinates },
+              properties: { ...f.properties },
+            })),
           },
         });
         view.addLayer({
           type: "vector",
-          source: trail,
-          polyline: { color, width: 3, clampToGround: true },
+          source: network,
+          polyline: { color: new Color().setStyle(NETWORK_COLOR), width: 2, clampToGround: true },
         });
+      }
+
+      const movers = parseMovers(res.movers);
+      if (res.meta.source === "pedestrian-sim") {
+        setSimInfo(` · seed ${res.meta.seed}`);
+      } else {
+        setSimInfo("");
+      }
+      const markerRadius =
+        movers.length > 100 ? 3 : movers.length > 20 ? 6 : MARKER_RADIUS_M;
+      const showTrails = movers.length <= TRAIL_LIMIT;
+      movers.forEach((mover, i) => {
+        const style = MARKER_COLORS[i % MARKER_COLORS.length];
+        const color = new Color().setStyle(style);
+        if (showTrails) {
+          const trail = view.addSource({
+            type: "geojson",
+            data: {
+              type: "Feature",
+              geometry: {
+                type: "LineString",
+                coordinates: mover.positions.map((p) =>
+                  p.height !== undefined ? [p.lng, p.lat, p.height] : [p.lng, p.lat],
+                ),
+              },
+              properties: {},
+            },
+          });
+          view.addLayer({
+            type: "vector",
+            source: trail,
+            polyline: { color, width: 3, clampToGround: true },
+          });
+        }
         const first = mover.positions[0];
         const useTerrain = first.height === undefined;
         const handle = view.addMesh<SphereMeshDesc>({
           sphere: {
-            radius: MARKER_RADIUS_M,
+            radius: markerRadius,
             color,
             emissiveColor: color,
             emissiveIntensity: 0.6,
@@ -260,7 +299,7 @@ export default function MfViewer({ areas, defaultAreaId }: Props) {
         </label>
         <span className="mfviewer-meta">
           {status === "loading" && "Loading map…"}
-          {status === "ready" && `${moverIds.length} movers`}
+          {status === "ready" && `${moverIds.length} movers${simInfo}`}
           {status === "error" && `Error: ${errorMsg}`}
         </span>
       </div>
@@ -294,7 +333,7 @@ export default function MfViewer({ areas, defaultAreaId }: Props) {
       </div>
       {moverIds.length > 0 && (
         <ul className="mfviewer-movers">
-          {moverIds.map((id, i) => (
+          {moverIds.slice(0, MOVER_LIST_LIMIT).map((id, i) => (
             <li key={id}>
               <span
                 className="mfviewer-swatch"
@@ -303,6 +342,7 @@ export default function MfViewer({ areas, defaultAreaId }: Props) {
               {id}
             </li>
           ))}
+          {moverIds.length > MOVER_LIST_LIMIT && <li>+{moverIds.length - MOVER_LIST_LIMIT} more</li>}
         </ul>
       )}
     </div>
