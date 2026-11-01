@@ -74,6 +74,13 @@ export default function MfViewer({ areas, defaultAreaId }: Props) {
     setRange(undefined);
     setMoverIds([]);
 
+    // Keep wheel gestures over the map from scrolling the page. The listener
+    // only calls preventDefault so navara's own zoom handling still runs.
+    const stopPageScroll = (e: WheelEvent) => {
+      e.preventDefault();
+    };
+    container.addEventListener("wheel", stopPageScroll, { passive: false });
+
     const applyTime = (t: number) => {
       for (const m of engine.markers) {
         const s = sampleAt(m.mover, t);
@@ -217,6 +224,7 @@ export default function MfViewer({ areas, defaultAreaId }: Props) {
     return () => {
       cancelled = true;
       cancelAnimationFrame(raf);
+      container.removeEventListener("wheel", stopPageScroll);
       disposeViewer(engine.view, container);
       engine.view = undefined;
       engine.markers = [];

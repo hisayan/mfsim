@@ -87,6 +87,9 @@ body {
   position: relative;
   height: 560px;
   background: #0a0a0f;
+  overflow: hidden;
+  overscroll-behavior: contain;
+  touch-action: none;
 }
 
 .mfviewer-map canvas {
