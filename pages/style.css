@@ -1,0 +1,150 @@
+:root {
+  --sim-bg: #101418;
+  --sim-panel: #1a2027;
+  --sim-text: #e8ecf1;
+  --sim-muted: #9aa4b0;
+  --sim-accent: #2f81f7;
+  --sim-border: #2c3540;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--sim-bg);
+  color: var(--sim-text);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.sim {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 16px 32px;
+}
+
+.sim-header h1 {
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: 0.02em;
+}
+
+.sim-header p {
+  margin: 4px 0 16px;
+  color: var(--sim-muted);
+  font-size: 14px;
+}
+
+.mfviewer {
+  border: 1px solid var(--sim-border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--sim-panel);
+}
+
+.mfviewer-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--sim-border);
+}
+
+.mfviewer-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.mfviewer-field select,
+.mfviewer-controls button {
+  background: #0d1117;
+  color: var(--sim-text);
+  border: 1px solid var(--sim-border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+.mfviewer-controls button {
+  cursor: pointer;
+  min-width: 88px;
+}
+
+.mfviewer-controls button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.mfviewer-meta {
+  font-size: 13px;
+  color: var(--sim-muted);
+}
+
+.mfviewer-map {
+  position: relative;
+  height: 560px;
+  background: #0a0a0f;
+}
+
+.mfviewer-map canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.mfviewer-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--sim-border);
+}
+
+.mfviewer-slider {
+  flex: 1;
+  accent-color: var(--sim-accent);
+}
+
+.mfviewer-clock {
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+  min-width: 96px;
+  text-align: right;
+}
+
+.mfviewer-movers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 0;
+  padding: 8px 12px 12px;
+  list-style: none;
+  font-size: 13px;
+  color: var(--sim-muted);
+}
+
+.mfviewer-movers li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mfviewer-swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+@media (max-width: 700px) {
+  .mfviewer-map {
+    height: 420px;
+  }
+
+  .mfviewer-toolbar {
+    flex-wrap: wrap;
+  }
+}

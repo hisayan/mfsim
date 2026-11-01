@@ -1,0 +1,32 @@
+{
+  "name": "mfsim",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@void/react": "1.4.0",
+    "oxc-transform-react": "^0.152.0",
+    "typescript": "^7.0.2",
+    "vite": "npm:@voidzero-dev/vite-plus-core@^1.3.0",
+    "vite-plus": "^1.3.0",
+    "void": "1.4.0"
+  },
+  "scripts": {
+    "dev": "vp dev",
+    "build": "vp build",
+    "preview": "vp preview",
+    "postinstall": "void prepare"
+  },
+  "dependencies": {
+    "@navaramap/three": "^0.2.1",
+    "@navaramap/three-default-descs": "^0.2.1",
+    "@navaramap/three-default-plugin": "^0.2.1",
+    "hono": "^4.11.9",
+    "postprocessing": "^6.39.5",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "three": "^0.186.0",
+    "zod": "^4.6.7"
+  }
+}
