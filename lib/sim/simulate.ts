@@ -82,7 +82,7 @@ export function slowdown(densityPerM: number): number {
   return Math.min(1, Math.max(MIN_SPEED_FRAC, 1 - densityPerM / JAM_DENSITY_PER_M));
 }
 
-type Agent = {
+export type Agent = {
   id: string;
   origin: string;
   destination: string;
@@ -98,7 +98,7 @@ type Agent = {
   legEnds: { edgeId: string; endM: number }[];
 };
 
-function pickWeighted(rng: () => number, entries: [string, number][]): string {
+export function pickWeighted(rng: () => number, entries: [string, number][]): string {
   const total = entries.reduce((s, [, w]) => s + w, 0);
   let r = rng() * total;
   for (const [id, w] of entries) {
@@ -130,7 +130,7 @@ function buildAgent(
   const points: [number, number][] = [];
   const segEdge: string[] = [];
   const legEnds: { edgeId: string; endM: number }[] = [];
-  const cum: number[] = [0];
+  const cum: number[] = [];
   let dist = 0;
   for (const leg of route.legs) {
     const edge = edges.get(leg.edgeId);
@@ -161,26 +161,36 @@ function buildAgent(
   };
 }
 
-/** 経路距離 s（m）における座標 */
-function positionAt(agent: Agent, s: number): [number, number] {
-  const clamped = Math.min(Math.max(s, 0), agent.totalM);
+/** 経路形状上の距離 s（m）における座標。流入シミュレーションの復元でも使う */
+export function positionOnPath(
+  points: [number, number][],
+  cum: number[],
+  totalM: number,
+  s: number,
+): [number, number] {
+  const clamped = Math.min(Math.max(s, 0), totalM);
   let lo = 0;
-  let hi = agent.cum.length - 1;
+  let hi = cum.length - 1;
   while (lo + 1 < hi) {
     const mid = (lo + hi) >> 1;
-    if (agent.cum[mid] <= clamped) lo = mid;
+    if (cum[mid] <= clamped) lo = mid;
     else hi = mid;
   }
-  const c0 = agent.cum[lo];
-  const c1 = agent.cum[lo + 1] ?? c0;
+  const c0 = cum[lo];
+  const c1 = cum[lo + 1] ?? c0;
   const k = c1 > c0 ? (clamped - c0) / (c1 - c0) : 0;
-  const [x0, y0] = agent.points[lo];
-  const [x1, y1] = agent.points[lo + 1] ?? agent.points[lo];
+  const [x0, y0] = points[lo];
+  const [x1, y1] = points[lo + 1] ?? points[lo];
   return [x0 + (x1 - x0) * k, y0 + (y1 - y0) * k];
 }
 
+/** 経路距離 s（m）における座標 */
+function positionAt(agent: Agent, s: number): [number, number] {
+  return positionOnPath(agent.points, agent.cum, agent.totalM, s);
+}
+
 /** 経路距離 s（m）が属する辺 id */
-function edgeAt(agent: Agent, s: number): string {
+export function edgeAt(agent: Agent, s: number): string {
   for (const leg of agent.legEnds) {
     if (s < leg.endM) return leg.edgeId;
   }

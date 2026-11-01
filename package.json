@@ -18,7 +18,7 @@
     "build": "vp build",
     "preview": "vp preview",
     "postinstall": "void prepare",
-    "test": "node --test \"lib/*.test.ts\""
+    "test": "tsx --test \"lib/*.test.ts\""
   },
   "dependencies": {
     "@navaramap/three": "^0.2.1",

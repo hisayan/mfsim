@@ -29,6 +29,15 @@ export type SimArea = {
 
 export const AREAS: SimArea[] = [
   {
+    id: "kyoto-station",
+    label: "Kyoto Station",
+    camera: { lng: 135.7585, lat: 34.986, distance: 650, heading: 15, pitch: -50, roll: 0 },
+    // 京都市 2023 の 3D Tiles は ZIP 公開のみで配信 URL が無いため、
+    // ひとまず建物なし（地形＋航空写真＋人流）で表示する。配信 URL か
+    // 自前ホストの目処がついたら tileset を追加する。
+    tilesets: [],
+  },
+  {
     id: "yokohama-nishi",
     label: "Nishi-ku, Yokohama",
     camera: { lng: 139.6275, lat: 35.4595, distance: 3500, heading: 0, pitch: -45, roll: 0 },
@@ -39,33 +48,12 @@ export const AREAS: SimArea[] = [
       },
     ],
   },
-  {
-    id: "chiyoda",
-    label: "Chiyoda-ku",
-    camera: { lng: 139.7671, lat: 35.6812, distance: 2500, heading: 50, pitch: -35, roll: 0 },
-    tilesets: [
-      {
-        url: "https://assets.cms.plateau.reearth.io/assets/db/070026-aa27-431b-8d53-7cc6b03244f8/13101_chiyoda-ku_pref_2023_citygml_1_op_bldg_3dtiles_13101_chiyoda-ku_lod2_no_texture/tileset.json",
-        attribution: "3D City Model (Project PLATEAU) Chiyoda Ward (FY2023) - MLIT PLATEAU",
-        attributionUrl: "https://www.geospatial.jp/ckan/dataset/plateau-13101-chiyoda-ku-2023",
-      },
-    ],
-  },
-  {
-    id: "shinjuku",
-    label: "Shinjuku-ku",
-    camera: { lng: 139.7, lat: 35.6895, distance: 2500, heading: 0, pitch: -40, roll: 0 },
-    tilesets: [
-      {
-        url: "https://assets.cms.plateau.reearth.io/assets/f0/840fc4-114c-41e4-9a65-67768efd3629/13104_shinjuku-ku_pref_2023_citygml_2_op_bldg_3dtiles_13104_shinjuku-ku_lod2_no_texture/tileset.json",
-        attribution: "3D City Model (Project PLATEAU) Shinjuku Ward (FY2023) - MLIT PLATEAU",
-        attributionUrl: "https://www.geospatial.jp/ckan/dataset/plateau-13104-shinjuku-ku-2023",
-      },
-    ],
-  },
 ];
 
-export const DEFAULT_AREA_ID = "yokohama-nishi";
+// 千代田・新宿の tileset 定義は人流シミュレーション未対応のため選択肢から外した。
+// 歩行ネットワークができたらこの配列に戻す（URL は git 履歴に残っている）。
+
+export const DEFAULT_AREA_ID = "kyoto-station";
 
 export function getArea(id: string): SimArea {
   return AREAS.find((a) => a.id === id) ?? AREAS[0];

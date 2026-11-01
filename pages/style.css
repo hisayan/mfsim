@@ -83,9 +83,87 @@ body {
   color: var(--sim-muted);
 }
 
-.mfviewer-map {
+.mfviewer-mapwrap {
   position: relative;
   height: 560px;
+}
+
+.mfviewer-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(10, 10, 15, 0.55);
+  color: var(--sim-muted);
+  font-size: 14px;
+}
+
+.mfviewer-veil-spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid var(--sim-border);
+  border-top-color: #00f0ff;
+  animation: mfviewer-spin 0.9s linear infinite;
+}
+
+@keyframes mfviewer-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mfviewer-veil-spinner {
+    animation: none;
+  }
+}
+
+.mfviewer-hud {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 5;
+  pointer-events: none;
+  background: rgba(13, 17, 23, 0.85);
+  border: 1px solid var(--sim-border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.mfviewer-hud-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.mfviewer-hud-row span {
+  color: var(--sim-muted);
+}
+
+.mfviewer-hud-row strong {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.mfviewer-hud-pulse {
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px solid var(--sim-border);
+  font-size: 12px;
+  color: #00f0ff;
+}
+
+.mfviewer-map {
+  position: relative;
+  height: 100%;
   background: #0a0a0f;
   overflow: hidden;
   overscroll-behavior: contain;
@@ -114,8 +192,30 @@ body {
 .mfviewer-clock {
   font-variant-numeric: tabular-nums;
   font-size: 14px;
-  min-width: 96px;
+  min-width: 132px;
   text-align: right;
+}
+
+.mfviewer-follow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px 10px;
+}
+
+.mfviewer-follow button {
+  background: #0d1117;
+  color: var(--sim-text);
+  border: 1px solid var(--sim-border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.mfviewer-follow button:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 .mfviewer-movers {
@@ -143,7 +243,7 @@ body {
 }
 
 @media (max-width: 700px) {
-  .mfviewer-map {
+  .mfviewer-mapwrap {
     height: 420px;
   }
 

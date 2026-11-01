@@ -13,7 +13,7 @@ export const GET = defineHandler
     query: z.object({
       area: z.string().optional(),
       source: z.enum(["sim", "sample"]).optional(),
-      count: z.coerce.number().int().min(1).max(500).optional(),
+      count: z.coerce.number().int().min(1).max(3000).optional(),
       seed: z.string().max(64).optional(),
       durationMin: z.coerce.number().int().min(1).max(180).optional(),
       sampleSec: z.coerce.number().int().min(1).max(120).optional(),
