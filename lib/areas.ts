@@ -30,7 +30,7 @@ export type SimArea = {
 export const AREAS: SimArea[] = [
   {
     id: "yokohama-nishi",
-    label: "横浜市西区",
+    label: "Nishi-ku, Yokohama",
     camera: { lng: 139.6275, lat: 35.4595, distance: 3500, heading: 0, pitch: -45, roll: 0 },
     tilesets: [
       {
@@ -41,7 +41,7 @@ export const AREAS: SimArea[] = [
   },
   {
     id: "chiyoda",
-    label: "千代田区",
+    label: "Chiyoda-ku",
     camera: { lng: 139.7671, lat: 35.6812, distance: 2500, heading: 50, pitch: -35, roll: 0 },
     tilesets: [
       {
@@ -53,7 +53,7 @@ export const AREAS: SimArea[] = [
   },
   {
     id: "shinjuku",
-    label: "新宿区",
+    label: "Shinjuku-ku",
     camera: { lng: 139.7, lat: 35.6895, distance: 2500, heading: 0, pitch: -40, roll: 0 },
     tilesets: [
       {

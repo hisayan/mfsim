@@ -7,7 +7,7 @@ export default function SimPage({ areas, defaultAreaId }: Props) {
     <main className="sim">
       <header className="sim-header">
         <h1>mfsim</h1>
-        <p>PLATEAU 3D都市モデル上の moving features シミュレータ（navara）</p>
+        <p>Moving features simulator on PLATEAU 3D city models (navara)</p>
       </header>
       <MfViewer areas={areas} defaultAreaId={defaultAreaId} />
     </main>

@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "devDependencies": {
+    "@types/node": "^26.6.6",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@void/react": "1.4.0",
@@ -16,7 +17,8 @@
     "dev": "vp dev",
     "build": "vp build",
     "preview": "vp preview",
-    "postinstall": "void prepare"
+    "postinstall": "void prepare",
+    "test": "node --test \"lib/*.test.ts\""
   },
   "dependencies": {
     "@navaramap/three": "^0.2.1",

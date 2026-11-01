@@ -5,6 +5,7 @@ import type { SphereMeshDesc } from "@navaramap/three-default-descs";
 import { fetch as apiFetch } from "void/client";
 import { getArea, type SimArea } from "../lib/areas";
 import { moversTimeRange, parseMovers, sampleAt, type Mover } from "../lib/mfjson";
+import { disposeViewer } from "../lib/viewer-dom";
 
 const MARKER_COLORS = ["#ff5136", "#ffd23f", "#3fd68f", "#4fa8ff", "#ff4fd8"];
 const MARKER_RADIUS_M = 12;
@@ -216,7 +217,7 @@ export default function MfViewer({ areas, defaultAreaId }: Props) {
     return () => {
       cancelled = true;
       cancelAnimationFrame(raf);
-      engine.view?.dispose();
+      disposeViewer(engine.view, container);
       engine.view = undefined;
       engine.markers = [];
     };
@@ -240,7 +241,7 @@ export default function MfViewer({ areas, defaultAreaId }: Props) {
     <div className="mfviewer">
       <div className="mfviewer-toolbar">
         <label className="mfviewer-field">
-          エリア
+          Area
           <select value={areaId} onChange={(e) => setAreaId(e.target.value)}>
             {areas.map((a) => (
               <option key={a.id} value={a.id}>
@@ -250,15 +251,15 @@ export default function MfViewer({ areas, defaultAreaId }: Props) {
           </select>
         </label>
         <span className="mfviewer-meta">
-          {status === "loading" && "地図を読み込んでいます…"}
-          {status === "ready" && `移動体 ${moverIds.length} 件`}
-          {status === "error" && `エラー: ${errorMsg}`}
+          {status === "loading" && "Loading map…"}
+          {status === "ready" && `${moverIds.length} movers`}
+          {status === "error" && `Error: ${errorMsg}`}
         </span>
       </div>
-      <div className="mfviewer-map" ref={containerRef} role="application" aria-label="3D都市モデルビューア" />
+      <div className="mfviewer-map" ref={containerRef} role="application" aria-label="3D city model viewer" />
       <div className="mfviewer-controls">
         <button type="button" onClick={() => setPlaying((p) => !p)} disabled={range === undefined}>
-          {playing ? "一時停止" : "再生"}
+          {playing ? "Pause" : "Play"}
         </button>
         <input
           type="range"
@@ -269,15 +270,15 @@ export default function MfViewer({ areas, defaultAreaId }: Props) {
           value={range ? clockMs : 0}
           disabled={range === undefined}
           onChange={(e) => onScrub(Number(e.target.value))}
-          aria-label="再生時刻"
+          aria-label="Playback time"
         />
         <span className="mfviewer-clock">{formatClock(clockMs)}</span>
         <label className="mfviewer-field">
-          速度
+          Speed
           <select value={speed} onChange={(e) => setSpeed(Number(e.target.value))}>
             {SPEEDS.map((s) => (
               <option key={s} value={s}>
-                {s}倍
+                {s}x
               </option>
             ))}
           </select>
